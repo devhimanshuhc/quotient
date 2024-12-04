@@ -12,7 +12,7 @@ export default function SignInClient() {
     try {
       setIsLoading(true);
       await signIn('google', {
-        callbackUrl: '/dashboard',
+        callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
       });
     } catch (error) {
       console.error('Error signing in with Google:', error);
