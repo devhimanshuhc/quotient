@@ -5,7 +5,7 @@ import PageTransition from "@/components/animations/PageTransition";
 export default function NotesLoading() {
   return (
     <PageTransition>
-      <div className="h-full p-4 space-y-8">
+      <div className="h-full max-w-7xl mx-auto p-4 space-y-8">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <Skeleton className="h-8 w-32" />

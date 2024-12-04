@@ -91,7 +91,7 @@ export default function DashboardPage() {
   return (
     <PageTransition>
       <main className="min-h-screen p-4 bg-gray-50/30">
-        <div className="max-w-6xl mx-auto space-y-8">
+        <div className="max-w-6xl mx-auto space-y-12">
           {/* Header Section */}
           <div className="relative overflow-hidden rounded-xl bg-gray-900 p-8 text-white">
             <div className="relative z-10">

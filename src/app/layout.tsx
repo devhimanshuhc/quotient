@@ -5,12 +5,17 @@ import AuthProvider from '@/components/AuthProvider'
 import SessionProvider from '@/components/providers/SessionProvider'
 import { Toaster } from "@/components/ui/toaster"
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const inter = Inter({ 
+  subsets: ['latin'], 
+  variable: '--font-inter',
+  display: 'swap',
+})
+
 const fraunces = Fraunces({ 
   subsets: ['latin'],
   variable: '--font-fraunces',
   display: 'swap',
-  style: ['italic', 'normal'],
+  axes: ['SOFT', 'WONK', 'opsz'],
 })
 
 export const metadata = {
@@ -24,14 +29,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="h-full bg-white">
-      <body className={`${inter.variable} ${fraunces.variable} font-inter h-full`}>
+    <html lang="en" className={`${inter.variable} ${fraunces.variable}`}>
+      <body className="font-inter antialiased">
         <AuthProvider>
           <SessionProvider>
             <Navbar />
-            <main>
-              {children}
-            </main>
+            {children}
             <Toaster />
           </SessionProvider>
         </AuthProvider>

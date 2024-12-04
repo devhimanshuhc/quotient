@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Loader2, Clock, FileText, BarChart2, RefreshCw } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import PageTransition from '@/components/animations/PageTransition';
 
 interface DailyStats {
   date: string;
@@ -132,13 +133,16 @@ export default function AnalyticsPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-medium">Analytics</h1>
-          <p className="text-muted-foreground">
-            Track your writing progress and habits
-          </p>
+    <PageTransition>
+    <div className="min-h-[calc(100vh-4rem)]">
+      <div className="max-w-6xl mx-auto space-y-12">
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-8 text-white">
+          <div className="relative z-10">
+            <h1 className="text-3xl font-bold font-fraunces">Analytics</h1>
+            <p className="mt-2 text-gray-200 max-w-xl">Track your writing progress and habits over time.</p>
+          </div>
+          <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/5 blur-3xl" />
+          <div className="absolute -bottom-8 -left-8 h-40 w-40 rounded-full bg-white/5 blur-3xl" />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -310,5 +314,6 @@ export default function AnalyticsPage() {
         </div>
       </div>
     </div>
+    </PageTransition>
   );
 }
