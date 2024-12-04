@@ -47,13 +47,24 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     redirect: async ({ url, baseUrl }) => {
+      console.log('Redirect URL:', url);
+      console.log('Base URL:', baseUrl);
       // Allows relative callback URLs
-      if (url.startsWith("/")) return `${baseUrl}${url}`
+      if (url.startsWith("/")) {
+        const fullUrl = `${baseUrl}${url}`;
+        console.log('Redirecting to:', fullUrl);
+        return fullUrl;
+      }
       // Allows callback URLs on the same origin
-      else if (new URL(url).origin === baseUrl) return url
-      return baseUrl
+      else if (new URL(url).origin === baseUrl) {
+        console.log('Redirecting to same origin:', url);
+        return url;
+      }
+      console.log('Fallback redirect to:', baseUrl);
+      return baseUrl;
     },
   },
+  debug: true,
   pages: {
     signIn: "/sign-in",
   },

@@ -12,7 +12,8 @@ export default function SignInClient() {
     try {
       setIsLoading(true);
       await signIn('google', {
-        callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+        callbackUrl: '/dashboard',
+        redirect: true,
       });
     } catch (error) {
       console.error('Error signing in with Google:', error);
