@@ -43,6 +43,8 @@ model User {
   email         String?      @unique
   emailVerified DateTime?
   image         String?
+  totalTimeSpent Int        @default(0)
+  lastActive    DateTime?
   accounts      Account[]
   sessions      Session[]
   collections   Collection[]
@@ -72,6 +74,8 @@ model Writing {
   id          String       @id @default(cuid())
   title       String
   content     String       @db.Text
+  wordCount   Int         @default(0)
+  timeSpent   Int         @default(0)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   published   Boolean      @default(false)

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import {
   BookOpen,
+  ChartBar,
   ChevronLeft,
   ChevronRight,
   FileText,
@@ -31,11 +32,11 @@ const sidebarItems = [
     href: '/collections',
     icon: BookOpen,
   },
-  // {
-  //   title: 'Quotes',
-  //   href: '/quotes',
-  //   icon: Quote,
-  // },
+  {
+    title: 'Analytics',
+    href: '/analytics',
+    icon: ChartBar,
+  },
   {
     title: 'Notes',
     href: '/notes',
@@ -50,6 +51,11 @@ const sidebarItems = [
       className: 'bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full ml-2'
     }
   },
+  // {
+  //   title: 'Quotes',
+  //   href: '/quotes',
+  //   icon: Quote,
+  // },
   // {
   //   title: 'Settings',
   //   href: '/settings',
