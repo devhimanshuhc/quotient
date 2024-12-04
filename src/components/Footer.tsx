@@ -7,7 +7,7 @@ import { useState } from 'react';
 const footerLinks = [
   { name: 'Collections', href: '/collections' },
   { name: 'About', href: '#' },
-  { name: 'Blog', href: '#' },
+  { name: 'Blog', href: '/blogs' },
 ];
 
 export default function Footer() {
