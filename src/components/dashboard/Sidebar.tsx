@@ -10,6 +10,7 @@ import {
   FileText,
   Home,
   LogOut,
+  Menu,
   Quote,
   Settings,
   Users,
@@ -66,6 +67,18 @@ const sidebarItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const event = new CustomEvent(SIDEBAR_STATE_CHANGE, { 
@@ -76,6 +89,14 @@ export default function Sidebar() {
 
   return (
     <>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-md hover:bg-gray-50"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
+
       <motion.div
         initial={false}
         animate={{
@@ -83,8 +104,12 @@ export default function Sidebar() {
         }}
         transition={{ duration: 0.2 }}
         className={cn(
-          "fixed left-0 h-screen border-r border-gray-200 bg-white transition-all duration-300",
-          isCollapsed ? "w-20" : "w-64"
+          "fixed left-0 h-screen border-r border-gray-200 bg-white transition-all duration-300 z-40",
+          isCollapsed ? "w-20" : "w-64",
+          // Desktop: Always visible
+          "hidden lg:block",
+          // Mobile: Show/hide based on menu state
+          isMobileMenuOpen ? "block" : "hidden"
         )}
       >
         <div className="flex h-full flex-col justify-between p-4">
@@ -179,10 +204,10 @@ export default function Sidebar() {
       </motion.div>
       
       {/* Overlay for mobile */}
-      {!isCollapsed && (
+      {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/20 lg:hidden"
-          onClick={() => setIsCollapsed(true)}
+          className="fixed inset-0 bg-black/20 lg:hidden z-30"
+          onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
     </>

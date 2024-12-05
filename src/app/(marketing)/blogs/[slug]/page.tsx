@@ -74,16 +74,16 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
     <PageTransition>
       <main className="min-h-screen bg-white">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-white">
+        <section className="relative overflow-hidden bg-white pt-16 sm:pt-0">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
-          <div className="relative mx-auto max-w-3xl px-6 py-24 sm:py-32 lg:px-8">
+          <div className="relative mx-auto max-w-3xl px-4 sm:px-6 py-16 sm:py-24 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-center"
+              className="text-center mt-4 sm:mt-0"
             >
-              <div className="flex items-center justify-center space-x-4 text-sm text-gray-500 mb-6">
+              <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-sm text-gray-500 mb-6">
                 <span>{post.category}</span>
                 <span>•</span>
                 <span>{post.date}</span>
@@ -94,7 +94,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-4xl font-bold font-fraunces tracking-tight text-gray-900 sm:text-5xl"
+                className="text-3xl sm:text-4xl md:text-5xl font-bold font-fraunces tracking-tight text-gray-900"
               >
                 {post.title}
               </motion.h1>
@@ -111,16 +111,16 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
         </section>
 
         {/* Blog Content */}
-        <section className="relative overflow-hidden py-16">
+        <section className="relative overflow-hidden py-12 sm:py-16">
           <div className="absolute inset-0 bg-gradient-to-b from-gray-50/0 via-gray-50 to-gray-50/0" />
           <motion.article
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="relative mx-auto max-w-2xl px-6 lg:px-8"
+            className="relative mx-auto max-w-2xl px-4 sm:px-6 lg:px-8"
           >
             <div 
-              className="prose prose-lg prose-gray mx-auto"
+              className="prose prose-lg prose-gray mx-auto prose-headings:font-fraunces prose-headings:text-2xl sm:prose-headings:text-3xl prose-p:text-base sm:prose-p:text-lg prose-p:leading-relaxed"
               dangerouslySetInnerHTML={{ 
                 __html: paragraphs.join('\n')
               }}

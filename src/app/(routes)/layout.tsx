@@ -2,6 +2,7 @@
 
 import Sidebar from "@/components/dashboard/Sidebar";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function ProtectedLayout({
   children,
@@ -25,13 +26,19 @@ export default function ProtectedLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <div 
-        className={`transition-all duration-200 py-24 ${
-          isCollapsed ? "ml-20" : "ml-64"
-        } bg-gray-50`}
+      <main 
+        className={cn(
+          "min-h-screen bg-gray-50 transition-all duration-200",
+          "pt-20 px-4",
+          "lg:pt-24 lg:px-8",
+          {
+            "lg:pl-24": isCollapsed,
+            "lg:pl-72": !isCollapsed
+          }
+        )}
       >
         {children}
-      </div>
+      </main>
     </div>
   );
 }

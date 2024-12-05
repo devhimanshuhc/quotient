@@ -92,11 +92,11 @@ export default function WriteModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] p-0 bg-white overflow-hidden">
+      <DialogContent className="sm:max-w-[800px] p-0 bg-white overflow-hidden max-h-[90vh] flex flex-col">
         <DialogHeader className="px-6 pt-6">
           <DialogTitle className="text-xl font-fraunces">Write Something</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-4">
+        <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-4 flex-1 overflow-y-auto">
           <div className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="title" className="text-sm font-medium text-gray-700">

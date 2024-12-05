@@ -229,7 +229,7 @@ export default function Features() {
         <div 
           className={`${
             isInView ? 'fixed z-20' : 'absolute'
-          } top-0 left-0 w-full bg-white/80 backdrop-blur-sm py-16 pointer-events-none`}
+          } top-0 left-0 w-full bg-white/80 backdrop-blur-sm py-12 pointer-events-none`}
         >
           <div className="mx-auto max-w-4xl text-center px-6">
             <div className="relative pt-16 md:pt-24">

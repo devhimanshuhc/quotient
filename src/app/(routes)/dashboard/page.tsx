@@ -146,7 +146,7 @@ export default function DashboardPage() {
                     View all
                   </Link>
                 </div>
-                <div className="divide-y divide-gray-50">
+                <div className="divide-y divide-gray-50 max-h-[250px] overflow-y-auto">
                   {isLoading ? (
                     <div className="p-6 space-y-4">
                       {[1, 2, 3].map((i) => (
