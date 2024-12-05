@@ -4,6 +4,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import type { MDXComponents } from 'mdx/types';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { calculateReadTime } from '@/lib/utils';
 
 interface BlogPost {
   id: string;
@@ -13,7 +14,7 @@ interface BlogPost {
   date: string;
   badge: string;
   content: string;
-  readTime: number;
+  readTime: string;
 }
 
 // Blog content
@@ -81,7 +82,7 @@ const blogs: BlogPost[] = [
     date: '05 Dec 2024',
     badge: "Personal Journey",
     content: alchemyBlogContent,
-    readTime: 8,
+    readTime: calculateReadTime(alchemyBlogContent),
   },
   {
     id: 'from-scribbles-to-software',
@@ -91,7 +92,7 @@ const blogs: BlogPost[] = [
     date: '04 Dec 2024',
     badge: "Writer",
     content: himanshuBlogContent,
-    readTime: 6,
+    readTime: calculateReadTime(himanshuBlogContent),
   }
 ];
 
@@ -157,7 +158,7 @@ export default function BlogPost({ params }: Props) {
               <span>•</span>
               <span>{blog.date}</span>
               <span>•</span>
-              <span>{blog.readTime} min read</span>
+              <span>{blog.readTime}</span>
             </div>
           </div>
           
