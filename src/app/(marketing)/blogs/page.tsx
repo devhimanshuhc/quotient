@@ -75,7 +75,7 @@ const blogs = [
     description: 'A journey into the art of writing, finding your voice, and crafting stories that resonate.',
     author: 'Aparupa Nayak',
     date: '05 Dec 2024',
-    badge: "Personal Journey",
+    badge: "Authored Insight",
     content: alchemyBlogContent,
     readTime: calculateReadTime(alchemyBlogContent),
   },
@@ -85,7 +85,7 @@ const blogs = [
     description: 'From writer to developer, merging two passions to create something beautiful.',
     author: 'Himanshu Chauhan',
     date: '04 Dec 2024',
-    badge: "Writera",
+    badge: "Personal Journey",
     content: himanshuBlogContent,
     readTime: calculateReadTime(himanshuBlogContent),
   }
