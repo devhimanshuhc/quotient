@@ -1,9 +1,16 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PenLine } from "lucide-react";
-import WriteModal from '@/components/modals/WriteModal';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { PenLine, Sparkles, ChevronDown } from "lucide-react";
+import WriteModal from "@/components/modals/WriteModal";
+import AIWriteModal from "@/components/modals/AIWriteModal";
 
 interface WriteButtonProps {
   collections: {
@@ -13,21 +20,49 @@ interface WriteButtonProps {
 }
 
 export function WriteButton({ collections }: WriteButtonProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
+  const [isAIWriteModalOpen, setIsAIWriteModalOpen] = useState(false);
 
   return (
     <>
-      <Button
-        size="sm"
-        className="bg-gray-900 hover:bg-gray-800 text-white transition-colors"
-        onClick={() => setIsModalOpen(true)}
-      >
-        <PenLine className="w-4 h-4" />
-        Write Something
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            size="sm"
+            className="bg-gray-900 hover:bg-gray-800 text-white transition-colors"
+          >
+            <PenLine className="w-4 h-4 mr-2" />
+            Write Something
+            <ChevronDown className="w-4 h-4 ml-2" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuItem
+            onClick={() => setIsWriteModalOpen(true)}
+            className="cursor-pointer"
+          >
+            <PenLine className="w-4 h-4 mr-2" />
+            Write Manually
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => setIsAIWriteModalOpen(true)}
+            className="cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            Generate with AI
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       <WriteModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isWriteModalOpen}
+        onClose={() => setIsWriteModalOpen(false)}
+        collections={collections}
+      />
+
+      <AIWriteModal
+        isOpen={isAIWriteModalOpen}
+        onClose={() => setIsAIWriteModalOpen(false)}
         collections={collections}
       />
     </>

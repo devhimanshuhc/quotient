@@ -1,14 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
-import TipTapEditor from '../editor/TipTapEditor';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Loader2, PlusCircle } from "lucide-react";
+import TipTapEditor from "../editor/TipTapEditor";
 
 interface Collection {
   id: string;
@@ -28,9 +39,9 @@ export default function WriteModal({
   collections,
   onSuccess,
 }: WriteModalProps) {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [selectedCollection, setSelectedCollection] = useState<string>('');
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [selectedCollection, setSelectedCollection] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
@@ -48,10 +59,10 @@ export default function WriteModal({
 
     try {
       setIsLoading(true);
-      const response = await fetch('/api/writings', {
-        method: 'POST',
+      const response = await fetch("/api/writings", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           title: title.trim(),
@@ -62,7 +73,7 @@ export default function WriteModal({
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(errorText || 'Failed to create write-up');
+        throw new Error(errorText || "Failed to create write-up");
       }
 
       const data = await response.json();
@@ -72,17 +83,18 @@ export default function WriteModal({
       });
       onClose();
       // Reset form
-      setTitle('');
-      setContent('');
-      setSelectedCollection('');
+      setTitle("");
+      setContent("");
+      setSelectedCollection("");
       // Call onSuccess if provided
       onSuccess?.();
       router.refresh();
     } catch (error) {
-      console.error('Error creating write-up:', error);
+      console.error("Error creating write-up:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create write-up",
+        description:
+          error instanceof Error ? error.message : "Failed to create write-up",
         variant: "destructive",
       });
     } finally {
@@ -94,12 +106,20 @@ export default function WriteModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] p-0 bg-white overflow-hidden max-h-[90vh] flex flex-col">
         <DialogHeader className="px-6 pt-6">
-          <DialogTitle className="text-xl font-fraunces">Write Something</DialogTitle>
+          <DialogTitle className="text-xl font-fraunces">
+            Write Something
+          </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-4 flex-1 overflow-y-auto">
+        <form
+          onSubmit={handleSubmit}
+          className="px-6 pb-6 space-y-4 flex-1 overflow-y-auto"
+        >
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="title" className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="title"
+                className="text-sm font-medium text-gray-700"
+              >
                 Title
               </label>
               <Input
@@ -112,7 +132,10 @@ export default function WriteModal({
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="collection" className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="collection"
+                className="text-sm font-medium text-gray-700"
+              >
                 Collection (Optional)
               </label>
               <Select
@@ -132,13 +155,13 @@ export default function WriteModal({
               </Select>
             </div>
             <div className="space-y-2">
-              <label htmlFor="content" className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="content"
+                className="text-sm font-medium text-gray-700"
+              >
                 Content
               </label>
-              <TipTapEditor
-                content={content}
-                onChange={setContent}
-              />
+              <TipTapEditor content={content} onChange={setContent} />
             </div>
           </div>
 
@@ -152,12 +175,13 @@ export default function WriteModal({
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isLoading}
               className="bg-gray-900 hover:bg-gray-800 text-white transition-colors"
             >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <PlusCircle className="h-4 w-4 mr-2" />
               Create Write-up
             </Button>
           </div>

@@ -1,29 +1,30 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { useRef, useEffect, useState } from 'react';
+import { motion } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
 
 const features = [
   {
-    title: 'Write & Create',
-    description: 'Craft your stories with powerful writing tools and a distraction-free environment.',
+    title: "Write & Create",
+    description:
+      "Craft your stories with powerful writing tools and a distraction-free environment.",
     icon: ({ isActive }: { isActive: boolean }) => (
       <motion.div className="w-12 h-12 relative">
         {/* Pen body */}
         <motion.div
           className="absolute top-1/2 left-1/2 h-1 w-8 bg-gray-900 origin-left"
-          initial={{ rotate: -45, x: '-50%', y: '-50%' }}
-          animate={{ 
+          initial={{ rotate: -45, x: "-50%", y: "-50%" }}
+          animate={{
             rotate: isActive ? [-45, 0, -45] : -45,
-            x: isActive ? ['-50%', '0%', '-50%'] : '-50%',
+            x: isActive ? ["-50%", "0%", "-50%"] : "-50%",
           }}
           transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
         />
         {/* Pen tip */}
         <motion.div
           className="absolute top-1/2 left-1/2 w-3 h-3 border-2 border-gray-900"
-          initial={{ rotate: -45, x: '-50%', y: '-50%' }}
-          animate={{ 
+          initial={{ rotate: -45, x: "-50%", y: "-50%" }}
+          animate={{
             rotate: isActive ? [-45, 0, -45] : -45,
             scale: isActive ? [1, 1.2, 1] : 1,
           }}
@@ -33,15 +34,157 @@ const features = [
     ),
   },
   {
-    title: 'Organize',
-    description: 'Keep your writing organized with smart collections and tags.',
+    title: "AI Write",
+    description:
+      "Generate ideas and content with AI-powered writing assistance.",
+    icon: ({ isActive }: { isActive: boolean }) => (
+      <motion.div className="w-12 h-12 relative">
+        {/* Main sparkle star ✨ */}
+        <motion.div
+          className="absolute top-1/2 left-1/2 w-8 h-8"
+          initial={{ x: "-50%", y: "-50%" }}
+          animate={{
+            scale: isActive ? [1, 1.2, 1] : 1,
+            rotate: isActive ? [0, 360] : 0,
+          }}
+          transition={{
+            scale: { duration: 2, repeat: Infinity, repeatDelay: 1 },
+            rotate: { duration: 4, repeat: Infinity, ease: "linear" },
+          }}
+        >
+          {/* Top ray */}
+          <motion.div
+            className="absolute top-0 left-1/2 w-[2px] h-4 bg-gray-900 origin-bottom"
+            initial={{ x: "-50%" }}
+            animate={{
+              scaleY: isActive ? [1, 1.3, 1] : 1,
+              opacity: isActive ? [0.8, 1, 0.8] : 0.8,
+            }}
+            transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 0.5 }}
+          />
+          {/* Bottom ray */}
+          <motion.div
+            className="absolute bottom-0 left-1/2 w-[2px] h-4 bg-gray-900 origin-top"
+            initial={{ x: "-50%" }}
+            animate={{
+              scaleY: isActive ? [1, 1.3, 1] : 1,
+              opacity: isActive ? [0.8, 1, 0.8] : 0.8,
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatDelay: 0.5,
+              delay: 0.2,
+            }}
+          />
+          {/* Left ray */}
+          <motion.div
+            className="absolute left-0 top-1/2 w-4 h-[2px] bg-gray-900 origin-right"
+            initial={{ y: "-50%" }}
+            animate={{
+              scaleX: isActive ? [1, 1.3, 1] : 1,
+              opacity: isActive ? [0.8, 1, 0.8] : 0.8,
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatDelay: 0.5,
+              delay: 0.4,
+            }}
+          />
+          {/* Right ray */}
+          <motion.div
+            className="absolute right-0 top-1/2 w-4 h-[2px] bg-gray-900 origin-left"
+            initial={{ y: "-50%" }}
+            animate={{
+              scaleX: isActive ? [1, 1.3, 1] : 1,
+              opacity: isActive ? [0.8, 1, 0.8] : 0.8,
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatDelay: 0.5,
+              delay: 0.6,
+            }}
+          />
+          {/* Center diamond */}
+          <motion.div
+            className="absolute top-1/2 left-1/2 w-2 h-2 bg-gray-900 rotate-45"
+            initial={{ x: "-50%", y: "-50%" }}
+            animate={{
+              scale: isActive ? [1, 1.4, 1] : 1,
+              opacity: isActive ? [1, 0.7, 1] : 1,
+            }}
+            transition={{ duration: 1, repeat: Infinity, repeatDelay: 1 }}
+          />
+        </motion.div>
+
+        {/* Secondary sparkles */}
+        <motion.div
+          className="absolute top-1 right-1 w-2 h-2"
+          animate={{
+            scale: isActive ? [0, 1, 0] : 0,
+            rotate: isActive ? [0, 180, 360] : 0,
+            opacity: isActive ? [0, 1, 0] : 0,
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            repeatDelay: 1,
+            delay: 0.5,
+          }}
+        >
+          <div className="absolute top-1/2 left-1/2 w-[1px] h-2 bg-gray-900 transform -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute top-1/2 left-1/2 w-2 h-[1px] bg-gray-900 transform -translate-x-1/2 -translate-y-1/2" />
+        </motion.div>
+
+        <motion.div
+          className="absolute bottom-0 left-1 w-2 h-2"
+          animate={{
+            scale: isActive ? [0, 1, 0] : 0,
+            rotate: isActive ? [0, -180, -360] : 0,
+            opacity: isActive ? [0, 1, 0] : 0,
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            repeatDelay: 1,
+            delay: 1.2,
+          }}
+        >
+          <div className="absolute top-1/2 left-1/2 w-[1px] h-2 bg-gray-900 transform -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute top-1/2 left-1/2 w-2 h-[1px] bg-gray-900 transform -translate-x-1/2 -translate-y-1/2" />
+        </motion.div>
+
+        <motion.div
+          className="absolute top-2 left-0 w-1 h-1"
+          animate={{
+            scale: isActive ? [0, 1.5, 0] : 0,
+            opacity: isActive ? [0, 1, 0] : 0,
+          }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            repeatDelay: 1.5,
+            delay: 2,
+          }}
+        >
+          <div className="absolute top-1/2 left-1/2 w-[1px] h-1 bg-gray-900 transform -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute top-1/2 left-1/2 w-1 h-[1px] bg-gray-900 transform -translate-x-1/2 -translate-y-1/2" />
+        </motion.div>
+      </motion.div>
+    ),
+  },
+  {
+    title: "Organize",
+    description: "Keep your writing organized with smart collections and tags.",
     icon: ({ isActive }: { isActive: boolean }) => (
       <motion.div className="w-12 h-12 relative">
         {/* Folder shape */}
         <motion.div
           className="absolute inset-0 border-2 border-gray-900 rounded-lg"
           initial={{ scaleY: 0.7 }}
-          animate={{ 
+          animate={{
             scaleY: isActive ? [0.7, 1, 0.7] : 0.7,
             y: isActive ? [0, -4, 0] : 0,
           }}
@@ -50,8 +193,8 @@ const features = [
         {/* Papers inside */}
         <motion.div
           className="absolute left-1/2 bottom-1 w-6 h-4 bg-gray-900"
-          initial={{ x: '-50%' }}
-          animate={{ 
+          initial={{ x: "-50%" }}
+          animate={{
             y: isActive ? [-4, -8, -4] : -4,
             scale: isActive ? [1, 1.1, 1] : 1,
           }}
@@ -61,8 +204,9 @@ const features = [
     ),
   },
   {
-    title: 'Collaborate',
-    description: 'Share your work and collaborate with other writers in real-time.',
+    title: "Collaborate",
+    description:
+      "Share your work and collaborate with other writers in real-time.",
     icon: ({ isActive }: { isActive: boolean }) => (
       <motion.div className="w-12 h-12 relative">
         {/* Connection lines */}
@@ -74,8 +218,8 @@ const features = [
         >
           <motion.div
             className="absolute top-1/2 left-1/2 h-[1px] w-8 bg-gray-900"
-            initial={{ rotate: -45, x: '-50%', y: '-50%' }}
-            animate={{ 
+            initial={{ rotate: -45, x: "-50%", y: "-50%" }}
+            animate={{
               scale: isActive ? [1, 1.2, 1] : 1,
               opacity: isActive ? [0.5, 1, 0.5] : 0.5,
             }}
@@ -83,8 +227,8 @@ const features = [
           />
           <motion.div
             className="absolute top-1/2 left-1/2 h-[1px] w-8 bg-gray-900"
-            initial={{ rotate: 45, x: '-50%', y: '-50%' }}
-            animate={{ 
+            initial={{ rotate: 45, x: "-50%", y: "-50%" }}
+            animate={{
               scale: isActive ? [1, 1.2, 1] : 1,
               opacity: isActive ? [0.5, 1, 0.5] : 0.5,
             }}
@@ -94,30 +238,36 @@ const features = [
         {/* Nodes */}
         <motion.div
           className="absolute top-0 left-0 w-2 h-2 bg-gray-900 rounded-full"
-          animate={{ 
+          animate={{
             scale: isActive ? [1, 1.2, 1] : 1,
           }}
           transition={{ duration: 1, repeat: Infinity, repeatDelay: 1 }}
         />
         <motion.div
           className="absolute bottom-0 right-0 w-2 h-2 bg-gray-900 rounded-full"
-          animate={{ 
+          animate={{
             scale: isActive ? [1, 1.2, 1] : 1,
           }}
-          transition={{ duration: 1, repeat: Infinity, repeatDelay: 1, delay: 0.5 }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+            repeatDelay: 1,
+            delay: 0.5,
+          }}
         />
       </motion.div>
     ),
   },
   {
-    title: 'Publish',
-    description: 'Share your stories with the world through beautiful, customizable formats.',
+    title: "Publish",
+    description:
+      "Share your stories with the world through beautiful, customizable formats.",
     icon: ({ isActive }: { isActive: boolean }) => (
       <motion.div className="w-12 h-12 relative">
         {/* Paper */}
         <motion.div
           className="absolute inset-0 border-2 border-gray-900 rounded-lg"
-          animate={{ 
+          animate={{
             scale: isActive ? [1, 1.1, 1] : 1,
             rotate: isActive ? [0, 5, 0] : 0,
           }}
@@ -129,18 +279,23 @@ const features = [
             key={i}
             className="absolute left-2 h-[1px] w-6 bg-gray-900"
             initial={{ y: 3 + i * 3 }}
-            animate={{ 
+            animate={{
               scaleX: isActive ? [1, 1.2, 1] : 1,
               opacity: isActive ? [0.5, 1, 0.5] : 0.5,
             }}
-            transition={{ duration: 2, repeat: Infinity, repeatDelay: 1, delay: i * 0.2 }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatDelay: 1,
+              delay: i * 0.2,
+            }}
           />
         ))}
         {/* Publish arrow */}
         <motion.div
           className="absolute bottom-1 right-1 w-3 h-3 border-r-2 border-b-2 border-gray-900"
           initial={{ rotate: 45 }}
-          animate={{ 
+          animate={{
             scale: isActive ? [1, 1.2, 1] : 1,
             rotate: isActive ? [45, 90, 45] : 45,
           }}
@@ -151,11 +306,17 @@ const features = [
   },
 ];
 
-function FeatureSection({ feature, isActive }: { feature: typeof features[0], isActive: boolean }) {
+function FeatureSection({
+  feature,
+  isActive,
+}: {
+  feature: (typeof features)[0];
+  isActive: boolean;
+}) {
   return (
     <motion.div
       className={`absolute inset-0 mt-10 flex items-center justify-center transition-opacity duration-500 ${
-        isActive ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        isActive ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
       <div className="max-w-2xl mx-auto px-6 text-center">
@@ -167,9 +328,9 @@ function FeatureSection({ feature, isActive }: { feature: typeof features[0], is
         >
           {/* Icon */}
           <feature.icon isActive={isActive} />
-          
+
           {/* Title */}
-          <motion.h3 
+          <motion.h3
             className="text-2xl font-medium text-gray-900"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: isActive ? 1 : 0, y: isActive ? 0 : 20 }}
@@ -177,7 +338,7 @@ function FeatureSection({ feature, isActive }: { feature: typeof features[0], is
           >
             {feature.title}
           </motion.h3>
-          
+
           {/* Description */}
           <motion.p
             className="text-gray-500 max-w-md"
@@ -205,8 +366,9 @@ export default function Features() {
       const container = containerRef.current;
       const rect = container.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      
-      const isVisible = rect.top <= windowHeight / 2 && rect.bottom >= windowHeight / 2;
+
+      const isVisible =
+        rect.top <= windowHeight / 2 && rect.bottom >= windowHeight / 2;
       setIsInView(isVisible);
 
       if (isVisible) {
@@ -218,17 +380,17 @@ export default function Features() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <section className="relative bg-white" ref={containerRef}>
       <div className="relative min-h-screen">
         {/* Title */}
-        <div 
+        <div
           className={`${
-            isInView ? 'fixed z-20' : 'absolute'
+            isInView ? "fixed z-20" : "absolute"
           } top-0 left-0 w-full bg-white/80 backdrop-blur-sm py-12 pointer-events-none`}
         >
           <div className="mx-auto max-w-4xl text-center px-6">
@@ -254,23 +416,22 @@ export default function Features() {
         </div>
 
         {/* Scroll Sections */}
-        <div style={{ height: `${features.length * 100}vh`, marginTop: '8rem' }}>
+        <div
+          style={{ height: `${features.length * 100}vh`, marginTop: "8rem" }}
+        >
           {features.map((_, index) => (
-            <div
-              key={index}
-              className="h-screen"
-            />
+            <div key={index} className="h-screen" />
           ))}
         </div>
 
         {/* Fixed Content Container */}
-        <div 
+        <div
           className={`${
-            isInView ? 'fixed' : 'absolute'
+            isInView ? "fixed" : "absolute"
           } top-0 left-0 w-full h-screen pt-36`}
           style={{
-            top: isInView ? '0' : '',
-            bottom: !isInView && activeIndex === features.length - 1 ? '0' : ''
+            top: isInView ? "0" : "",
+            bottom: !isInView && activeIndex === features.length - 1 ? "0" : "",
           }}
         >
           {features.map((feature, index) => (
