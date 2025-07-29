@@ -7,6 +7,7 @@ import { Fraunces } from "next/font/google";
 import { Separator } from "@/components/ui/separator";
 import { WriteButton } from "./components/WriteButton";
 import { WriteupCard } from "./components/WriteupCard";
+import AutoOpenNote from "@/components/AutoOpenNote";
 import PageTransition from "@/components/animations/PageTransition";
 
 const fraunces = Fraunces({ subsets: ["latin"] });
@@ -56,13 +57,13 @@ export default async function NotesPage() {
       name: true,
     },
     orderBy: {
-      name: 'asc',
+      name: "asc",
     },
   });
 
   // Group writings by date
   const groupedWritings: { [key: string]: typeof writings } = {};
-  writings.forEach(writing => {
+  writings.forEach((writing) => {
     const date = format(writing.createdAt, "MMMM d, yyyy");
     if (!groupedWritings[date]) {
       groupedWritings[date] = [];
@@ -72,42 +73,47 @@ export default async function NotesPage() {
 
   return (
     <PageTransition>
-    <div className="h-full p-4 max-w-6xl mx-auto space-y-8">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className={`text-2xl font-semibold ${fraunces.className}`}>
-            Your Notes
-          </h2>
-          <WriteButton collections={collections} />
-        </div>
-        <Separator />
-      </div>
-
-      <div className="space-y-6">
-        {writings.length === 0 ? (
-          <div className="text-center py-12">
-            <h3 className="text-xl text-gray-600 mb-4">No write-ups yet</h3>
-            <p className="text-gray-500 mb-6">Start your journey by creating your first write-up!</p>
+      <div className="h-full p-4 max-w-6xl mx-auto space-y-8">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className={`text-2xl font-semibold ${fraunces.className}`}>
+              Your Notes
+            </h2>
             <WriteButton collections={collections} />
           </div>
-        ) : (
-          Object.entries(groupedWritings).map(([date, writings]) => (
-            <div key={date} className="space-y-4">
-              <h3 className="text-sm font-medium text-gray-500">{date}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-max">
-                {writings.map((writing) => (
-                  <WriteupCard
-                    key={writing.id}
-                    writing={writing}
-                    collections={collections}
-                  />
-                ))}
-              </div>
+          <Separator />
+        </div>
+
+        <div className="space-y-6">
+          {writings.length === 0 ? (
+            <div className="text-center py-12">
+              <h3 className="text-xl text-gray-600 mb-4">No write-ups yet</h3>
+              <p className="text-gray-500 mb-6">
+                Start your journey by creating your first write-up!
+              </p>
+              <WriteButton collections={collections} />
             </div>
-          ))
-        )}
+          ) : (
+            Object.entries(groupedWritings).map(([date, writings]) => (
+              <div key={date} className="space-y-4">
+                <h3 className="text-sm font-medium text-gray-500">{date}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-max">
+                  {writings.map((writing) => (
+                    <WriteupCard
+                      key={writing.id}
+                      writing={writing}
+                      collections={collections}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* Auto-open note modal when coming from search */}
+      <AutoOpenNote writings={writings} collections={collections} />
     </PageTransition>
   );
 }

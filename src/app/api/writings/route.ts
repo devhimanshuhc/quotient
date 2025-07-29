@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { updateUserActivity } from "@/middleware/analytics";
 
 export async function POST(req: Request) {
   try {
@@ -26,6 +27,14 @@ export async function POST(req: Request) {
 
     if (!user) {
       return new NextResponse("User not found", { status: 404 });
+    }
+
+    // Update user activity for time tracking
+    try {
+      await updateUserActivity(user.id);
+    } catch (error) {
+      console.error("Error updating user activity:", error);
+      // Don't fail the request if analytics fails
     }
 
     // Create writing data

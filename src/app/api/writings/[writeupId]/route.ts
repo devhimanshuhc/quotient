@@ -2,6 +2,7 @@ import { NextResponse, NextRequest as Request } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { updateUserActivity } from "@/middleware/analytics";
 
 export async function PATCH(
   req: Request,
@@ -29,6 +30,14 @@ export async function PATCH(
 
     if (!user) {
       return new NextResponse("User not found", { status: 404 });
+    }
+
+    // Update user activity for time tracking
+    try {
+      await updateUserActivity(user.id);
+    } catch (error) {
+      console.error("Error updating user activity:", error);
+      // Don't fail the request if analytics fails
     }
 
     // Verify writing exists and belongs to user
@@ -73,7 +82,9 @@ export async function PATCH(
             content,
             collections: {
               // First disconnect all existing collections
-              disconnect: existingWriting.collections.map(c => ({ id: c.id })),
+              disconnect: existingWriting.collections.map((c) => ({
+                id: c.id,
+              })),
               // Then connect the new collection if provided
               ...(collectionId && {
                 connect: [{ id: collectionId }],
@@ -93,7 +104,7 @@ export async function PATCH(
         // Get latest version number
         const latestVersion = await tx.writingVersion.findFirst({
           where: { writingId: params.writeupId },
-          orderBy: { versionNumber: 'desc' },
+          orderBy: { versionNumber: "desc" },
         });
 
         // Create new version
@@ -110,7 +121,7 @@ export async function PATCH(
         // Keep only last 3 versions
         const oldVersions = await tx.writingVersion.findMany({
           where: { writingId: params.writeupId },
-          orderBy: { versionNumber: 'desc' },
+          orderBy: { versionNumber: "desc" },
           skip: 3,
         });
 
@@ -118,7 +129,7 @@ export async function PATCH(
           await tx.writingVersion.deleteMany({
             where: {
               id: {
-                in: oldVersions.map(v => v.id),
+                in: oldVersions.map((v) => v.id),
               },
             },
           });
@@ -137,10 +148,9 @@ export async function PATCH(
     }
   } catch (error) {
     console.error("[WRITEUP_PATCH]", error);
-    return new NextResponse(
-      "An unexpected error occurred. Please try again.",
-      { status: 500 }
-    );
+    return new NextResponse("An unexpected error occurred. Please try again.", {
+      status: 500,
+    });
   }
 }
 
@@ -150,20 +160,20 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user) {
       return new NextResponse("Unauthorized - No session", { status: 401 });
     }
 
     const user = session.user as { id: string; email: string };
-    
+
     if (!user.id) {
       return new NextResponse("Unauthorized - No user ID", { status: 401 });
     }
 
     console.log("[DELETE] Starting deletion process", {
       writingId: params.writeupId,
-      userId: user.id
+      userId: user.id,
     });
 
     // Use a transaction to ensure data consistency
@@ -175,7 +185,7 @@ export async function DELETE(
         },
         select: {
           userId: true,
-          id: true
+          id: true,
         },
       });
 
@@ -187,7 +197,7 @@ export async function DELETE(
       if (writeup.userId !== user.id) {
         console.log("[DELETE] Unauthorized - User ID mismatch.", {
           expected: writeup.userId,
-          got: user.id
+          got: user.id,
         });
         throw new Error("Unauthorized - Not the owner");
       }
@@ -202,13 +212,12 @@ export async function DELETE(
 
     console.log("[DELETE] Successfully deleted writing", result);
     return new NextResponse(null, { status: 204 });
-
   } catch (error) {
     console.error("[DELETE] Error occurred:", {
       error,
       errorMessage: error instanceof Error ? error.message : "Unknown error",
       errorStack: error instanceof Error ? error.stack : undefined,
-      params: params
+      params: params,
     });
 
     if (error instanceof Error) {
@@ -225,7 +234,7 @@ export async function DELETE(
     if (prismaError.code) {
       console.error("[DELETE] Prisma error:", {
         code: prismaError.code,
-        meta: prismaError.meta
+        meta: prismaError.meta,
       });
     }
 

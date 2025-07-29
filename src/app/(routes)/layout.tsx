@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
 import Sidebar from "@/components/dashboard/Sidebar";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useActivityTracking } from "@/hooks/useActivityTracking";
 
 export default function ProtectedLayout({
   children,
@@ -11,29 +12,38 @@ export default function ProtectedLayout({
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  // Track user activity for analytics
+  useActivityTracking();
+
   useEffect(() => {
     const handleSidebarStateChange = (event: CustomEvent) => {
       setIsCollapsed(event.detail.isCollapsed);
     };
 
-    window.addEventListener('sidebarStateChange', handleSidebarStateChange as EventListener);
-    
+    window.addEventListener(
+      "sidebarStateChange",
+      handleSidebarStateChange as EventListener
+    );
+
     return () => {
-      window.removeEventListener('sidebarStateChange', handleSidebarStateChange as EventListener);
+      window.removeEventListener(
+        "sidebarStateChange",
+        handleSidebarStateChange as EventListener
+      );
     };
   }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <main 
+      <main
         className={cn(
           "min-h-screen bg-gray-50 transition-all duration-200",
           "pt-20 px-4",
           "lg:pt-24 lg:px-8",
           {
             "lg:pl-24": isCollapsed,
-            "lg:pl-72": !isCollapsed
+            "lg:pl-72": !isCollapsed,
           }
         )}
       >

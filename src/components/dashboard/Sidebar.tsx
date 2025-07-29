@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 import {
   BookOpen,
   ChartBar,
@@ -14,43 +14,44 @@ import {
   Quote,
   Settings,
   Users,
-} from 'lucide-react';
-import { signOut } from 'next-auth/react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+} from "lucide-react";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 
-const SIDEBAR_STATE_CHANGE = 'sidebarStateChange';
+const SIDEBAR_STATE_CHANGE = "sidebarStateChange";
 
 const sidebarItems = [
   {
-    title: 'Dashboard',
-    href: '/dashboard',
+    title: "Dashboard",
+    href: "/dashboard",
     icon: Home,
   },
   {
-    title: 'Collections',
-    href: '/collections',
-    icon: BookOpen,
-  },
-  {
-    title: 'Analytics',
-    href: '/analytics',
-    icon: ChartBar,
-  },
-  {
-    title: 'Notes',
-    href: '/notes',
+    title: "Notes",
+    href: "/notes",
     icon: FileText,
   },
   {
-    title: 'Shared',
-    href: '/shared',
+    title: "Collections",
+    href: "/collections",
+    icon: BookOpen,
+  },
+  {
+    title: "Analytics",
+    href: "/analytics",
+    icon: ChartBar,
+  },
+  {
+    title: "Shared",
+    href: "/shared",
     icon: Users,
     badge: {
-      text: 'Coming Soon',
-      className: 'bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full ml-2'
-    }
+      text: "Coming Soon",
+      className:
+        "bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full ml-2",
+    },
   },
   // {
   //   title: 'Quotes',
@@ -76,13 +77,13 @@ export default function Sidebar() {
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
-    const event = new CustomEvent(SIDEBAR_STATE_CHANGE, { 
-      detail: { isCollapsed } 
+    const event = new CustomEvent(SIDEBAR_STATE_CHANGE, {
+      detail: { isCollapsed },
     });
     window.dispatchEvent(event);
   }, [isCollapsed]);
@@ -149,17 +150,21 @@ export default function Sidebar() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'group flex items-center rounded-lg px-3 py-2 transition-all duration-200 hover:bg-gray-100',
+                      "group flex items-center rounded-lg px-3 py-2 transition-all duration-200 hover:bg-gray-100",
                       isActive
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-600 hover:text-gray-900'
+                        ? "bg-gray-100 text-gray-900"
+                        : "text-gray-600 hover:text-gray-900"
                     )}
                   >
                     <div className="flex items-center gap-x-3">
-                      <Icon className={cn(
-                        "h-5 w-5 transition-colors",
-                        isActive ? "text-gray-900" : "text-gray-500 group-hover:text-gray-900"
-                      )} />
+                      <Icon
+                        className={cn(
+                          "h-5 w-5 transition-colors",
+                          isActive
+                            ? "text-gray-900"
+                            : "text-gray-500 group-hover:text-gray-900"
+                        )}
+                      />
                       {!isCollapsed && (
                         <motion.div
                           initial={{ opacity: 0 }}
@@ -184,7 +189,7 @@ export default function Sidebar() {
 
           {/* Logout Button */}
           <button
-            onClick={() => signOut({ callbackUrl: '/sign-in' })}
+            onClick={() => signOut({ callbackUrl: "/sign-in" })}
             className="group flex items-center rounded-lg px-3 py-2 text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900"
           >
             <div className="flex items-center gap-x-3">
@@ -202,7 +207,7 @@ export default function Sidebar() {
           </button>
         </div>
       </motion.div>
-      
+
       {/* Overlay for mobile */}
       {isMobileMenuOpen && (
         <div

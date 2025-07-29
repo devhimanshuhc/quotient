@@ -8,5 +8,9 @@ export const config = {
     "/collections/:path*",
     "/quotes",
     "/quotes/:path*",
+    "/notes",
+    "/notes/:path*",
+    "/analytics",
+    "/analytics/:path*",
   ],
 };
