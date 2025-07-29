@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import QuotientLogo from "./QuotientLogo";
 import SearchBar from "./SearchBar";
 import MobileSearchModal from "./MobileSearchModal";
@@ -32,6 +32,11 @@ export default function Navbar() {
   const [imageError, setImageError] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Only show search on authenticated routes (not home or blogs)
+  const shouldShowSearch =
+    session && pathname !== "/" && !pathname.startsWith("/blogs");
 
   const handleSignOut = async () => {
     try {
@@ -66,8 +71,8 @@ export default function Navbar() {
             <QuotientLogo />
           </Link>
 
-          {/* Search Bar - Only show for authenticated users on desktop */}
-          {session && (
+          {/* Search Bar - Only show for authenticated users on desktop and not on home/blogs */}
+          {shouldShowSearch && (
             <div className="flex-1 max-w-md mx-4 hidden md:block">
               <SearchBar />
             </div>
@@ -84,13 +89,15 @@ export default function Navbar() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                {/* Mobile Search Button */}
-                <button
-                  onClick={() => setIsMobileSearchOpen(true)}
-                  className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <Search className="h-5 w-5 text-gray-600" />
-                </button>
+                {/* Mobile Search Button - Only show if search should be available */}
+                {shouldShowSearch && (
+                  <button
+                    onClick={() => setIsMobileSearchOpen(true)}
+                    className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <Search className="h-5 w-5 text-gray-600" />
+                  </button>
+                )}
 
                 {/* Mobile Dropdown */}
                 <DropdownMenu>
@@ -158,8 +165,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Search Modal */}
-      {session && (
+      {/* Mobile Search Modal - Only show if search should be available */}
+      {shouldShowSearch && (
         <MobileSearchModal
           isOpen={isMobileSearchOpen}
           onClose={() => setIsMobileSearchOpen(false)}

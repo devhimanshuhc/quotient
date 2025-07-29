@@ -1,19 +1,52 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Loader2, FileDown } from "lucide-react";
-import TipTapEditor from '../editor/TipTapEditor';
-import { VersionHistory } from '@/components/VersionHistory';
-import { jsPDF } from 'jspdf';
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
-import DOMPurify from 'isomorphic-dompurify';
+import TipTapEditor from "../editor/TipTapEditor";
+import { VersionHistory } from "@/components/VersionHistory";
+import { jsPDF } from "jspdf";
+import {
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  HeadingLevel,
+  AlignmentType,
+} from "docx";
+import DOMPurify from "isomorphic-dompurify";
 
 interface Collection {
   id: string;
@@ -40,15 +73,19 @@ export default function EditWriteupModal({
   onClose,
   writing,
   collections,
-  onUnsavedChanges
+  onUnsavedChanges,
 }: EditWriteupModalProps) {
   const [title, setTitle] = useState(writing.title);
   const [content, setContent] = useState(writing.content);
-  const [selectedCollection, setSelectedCollection] = useState(writing.collections[0]?.id || 'uncategorized');
+  const [selectedCollection, setSelectedCollection] = useState(
+    writing.collections[0]?.id || "uncategorized"
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isViewingVersions, setIsViewingVersions] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [showUnsavedChangesDialog, setShowUnsavedChangesDialog] =
+    useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -57,7 +94,7 @@ export default function EditWriteupModal({
     if (isOpen) {
       setTitle(writing.title);
       setContent(writing.content);
-      setSelectedCollection(writing.collections[0]?.id || 'uncategorized');
+      setSelectedCollection(writing.collections[0]?.id || "uncategorized");
       setHasUnsavedChanges(false);
       setIsViewingVersions(false);
     }
@@ -66,25 +103,42 @@ export default function EditWriteupModal({
   // Track unsaved changes
   useEffect(() => {
     if (isViewingVersions) return;
-    
-    const hasChanges = 
-      title !== writing.title || 
-      content !== writing.content || 
-      selectedCollection !== (writing.collections[0]?.id || 'uncategorized');
-    
+
+    const hasChanges =
+      title !== writing.title ||
+      content !== writing.content ||
+      selectedCollection !== (writing.collections[0]?.id || "uncategorized");
+
     if (!isViewingVersions) {
       setHasUnsavedChanges(hasChanges);
       onUnsavedChanges?.(hasChanges);
     }
-  }, [title, content, selectedCollection, writing, onUnsavedChanges, isViewingVersions]);
+  }, [
+    title,
+    content,
+    selectedCollection,
+    writing,
+    onUnsavedChanges,
+    isViewingVersions,
+  ]);
 
   const handleClose = () => {
     if (hasUnsavedChanges && !isViewingVersions) {
-      const confirmed = window.confirm('You have unsaved changes. Are you sure you want to close?');
-      if (!confirmed) return;
+      setShowUnsavedChangesDialog(true);
+      return;
     }
     setIsViewingVersions(false);
     onClose();
+  };
+
+  const handleConfirmClose = () => {
+    setShowUnsavedChangesDialog(false);
+    setIsViewingVersions(false);
+    onClose();
+  };
+
+  const handleCancelClose = () => {
+    setShowUnsavedChangesDialog(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -103,20 +157,23 @@ export default function EditWriteupModal({
     try {
       setIsSaving(true);
       const response = await fetch(`/api/writings/${writing.id}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           title: title.trim(),
           content: content.trim(),
-          collectionId: selectedCollection === 'uncategorized' ? undefined : selectedCollection,
+          collectionId:
+            selectedCollection === "uncategorized"
+              ? undefined
+              : selectedCollection,
         }),
       });
 
       if (!response.ok) {
         const error = await response.text();
-        throw new Error(error || 'Failed to update write-up');
+        throw new Error(error || "Failed to update write-up");
       }
 
       const data = await response.json();
@@ -127,10 +184,11 @@ export default function EditWriteupModal({
       onClose();
       router.refresh();
     } catch (error) {
-      console.error('Error updating write-up:', error);
+      console.error("Error updating write-up:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update write-up",
+        description:
+          error instanceof Error ? error.message : "Failed to update write-up",
         variant: "destructive",
       });
     } finally {
@@ -138,7 +196,10 @@ export default function EditWriteupModal({
     }
   };
 
-  const handleRestoreVersion = (restoredContent: string, restoredTitle: string) => {
+  const handleRestoreVersion = (
+    restoredContent: string,
+    restoredTitle: string
+  ) => {
     setTitle(restoredTitle);
     setContent(restoredContent);
     setIsViewingVersions(false);
@@ -147,7 +208,8 @@ export default function EditWriteupModal({
     onUnsavedChanges?.(true);
     toast({
       title: "Version Restored",
-      description: "The selected version has been restored. Don't forget to save your changes.",
+      description:
+        "The selected version has been restored. Don't forget to save your changes.",
     });
   };
 
@@ -158,10 +220,12 @@ export default function EditWriteupModal({
   };
 
   const parseFormattedContent = (htmlContent: string) => {
-    const tempDiv = document.createElement('div');
+    const tempDiv = document.createElement("div");
     tempDiv.innerHTML = DOMPurify.sanitize(htmlContent);
-    
-    const extractFormatting = (element: Element): Array<{
+
+    const extractFormatting = (
+      element: Element
+    ): Array<{
       text: string;
       bold: boolean;
       italic: boolean;
@@ -177,13 +241,16 @@ export default function EditWriteupModal({
         strikethrough: boolean;
         isListItem?: boolean;
       }> = [];
-      
-      const processNode = (node: Node, format: {
-        bold: boolean;
-        italic: boolean;
-        underline: boolean;
-        strikethrough: boolean;
-      }) => {
+
+      const processNode = (
+        node: Node,
+        format: {
+          bold: boolean;
+          italic: boolean;
+          underline: boolean;
+          strikethrough: boolean;
+        }
+      ) => {
         if (node.nodeType === Node.TEXT_NODE) {
           const text = node.textContent?.trim();
           if (text) {
@@ -195,18 +262,26 @@ export default function EditWriteupModal({
         if (node.nodeType === Node.ELEMENT_NODE) {
           const el = node as Element;
           const newFormat = { ...format };
-          
+
           // Check for formatting tags
-          if (el.tagName === 'STRONG' || el.tagName === 'B') newFormat.bold = true;
-          if (el.tagName === 'EM' || el.tagName === 'I') newFormat.italic = true;
-          if (el.tagName === 'U') newFormat.underline = true;
-          if (el.tagName === 'S' || el.tagName === 'DEL' || el.tagName === 'STRIKE') newFormat.strikethrough = true;
-          
+          if (el.tagName === "STRONG" || el.tagName === "B")
+            newFormat.bold = true;
+          if (el.tagName === "EM" || el.tagName === "I")
+            newFormat.italic = true;
+          if (el.tagName === "U") newFormat.underline = true;
+          if (
+            el.tagName === "S" ||
+            el.tagName === "DEL" ||
+            el.tagName === "STRIKE"
+          )
+            newFormat.strikethrough = true;
+
           // Handle lists
-          if (el.tagName === 'UL' || el.tagName === 'OL') {
+          if (el.tagName === "UL" || el.tagName === "OL") {
             Array.from(el.children).forEach((li, index) => {
-              if (li.tagName === 'LI') {
-                const bulletPoint = el.tagName === 'UL' ? '• ' : `${index + 1}. `;
+              if (li.tagName === "LI") {
+                const bulletPoint =
+                  el.tagName === "UL" ? "• " : `${index + 1}. `;
                 const listItemContent: Array<{
                   text: string;
                   bold: boolean;
@@ -214,94 +289,97 @@ export default function EditWriteupModal({
                   underline: boolean;
                   strikethrough: boolean;
                 }> = [];
-                
-                Array.from(li.childNodes).forEach(child => {
+
+                Array.from(li.childNodes).forEach((child) => {
                   const prevLength = listItemContent.length;
                   processNode(child, newFormat);
                   const newItems = result.splice(prevLength);
                   listItemContent.push(...newItems);
                 });
-                
+
                 if (listItemContent.length > 0) {
-                  listItemContent[0].text = bulletPoint + listItemContent[0].text;
+                  listItemContent[0].text =
+                    bulletPoint + listItemContent[0].text;
                   result.push(...listItemContent);
                 }
-                
-                result.push({ 
-                  text: '\n',
+
+                result.push({
+                  text: "\n",
                   bold: false,
                   italic: false,
                   underline: false,
-                  strikethrough: false
+                  strikethrough: false,
                 });
               }
             });
             return;
           }
-          
+
           // Handle paragraphs and line breaks
-          if (el.tagName === 'P' && result.length > 0) {
+          if (el.tagName === "P" && result.length > 0) {
             result.push({
-              text: '\n',
+              text: "\n",
               bold: false,
               italic: false,
               underline: false,
-              strikethrough: false
+              strikethrough: false,
             });
           }
-          if (el.tagName === 'BR') {
+          if (el.tagName === "BR") {
             result.push({
-              text: '\n',
+              text: "\n",
               bold: false,
               italic: false,
               underline: false,
-              strikethrough: false
+              strikethrough: false,
             });
             return;
           }
-          
-          Array.from(el.childNodes).forEach(child => processNode(child, newFormat));
+
+          Array.from(el.childNodes).forEach((child) =>
+            processNode(child, newFormat)
+          );
         }
       };
-      
+
       processNode(element, {
         bold: false,
         italic: false,
         underline: false,
-        strikethrough: false
+        strikethrough: false,
       });
       return result;
     };
-    
+
     return extractFormatting(tempDiv);
   };
 
   const handleExportDOCX = async () => {
     try {
       setIsExporting(true);
-      
+
       // Parse content and create formatted paragraphs
       const parsedContent = parseFormattedContent(content);
       let currentParagraph: Array<TextRun> = [];
       const paragraphs: Array<Paragraph> = [];
-      
+
       // Add title
       paragraphs.push(
         new Paragraph({
           children: [new TextRun({ text: title, bold: true, size: 32 })],
           alignment: AlignmentType.CENTER,
-          spacing: { after: 300 }
+          spacing: { after: 300 },
         })
       );
-      
+
       // Process content
-      parsedContent.forEach(segment => {
-        if (segment.text === '\n') {
+      parsedContent.forEach((segment) => {
+        if (segment.text === "\n") {
           if (currentParagraph.length > 0) {
             paragraphs.push(
               new Paragraph({
                 children: currentParagraph,
-                spacing: { after: 200 }
+                spacing: { after: 200 },
               })
             );
             currentParagraph = [];
@@ -312,37 +390,41 @@ export default function EditWriteupModal({
               text: segment.text,
               bold: segment.bold,
               italics: segment.italic,
-              break: segment.text.endsWith('\n') ? 1 : 0
+              break: segment.text.endsWith("\n") ? 1 : 0,
             })
           );
         }
       });
-      
+
       // Add any remaining content as a paragraph
       if (currentParagraph.length > 0) {
         paragraphs.push(
           new Paragraph({
             children: currentParagraph,
-            spacing: { after: 200 }
+            spacing: { after: 200 },
           })
         );
       }
-      
+
       // Create document
       const doc = new Document({
-        sections: [{
-          properties: {},
-          children: paragraphs
-        }]
+        sections: [
+          {
+            properties: {},
+            children: paragraphs,
+          },
+        ],
       });
 
       // Generate and save document
       const buffer = await Packer.toBuffer(doc);
-      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      });
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `${title.toLowerCase().replace(/\s+/g, '-')}.docx`;
+      link.download = `${title.toLowerCase().replace(/\s+/g, "-")}.docx`;
       link.click();
       window.URL.revokeObjectURL(url);
 
@@ -351,7 +433,7 @@ export default function EditWriteupModal({
         description: "DOCX exported successfully",
       });
     } catch (error) {
-      console.error('Error exporting DOCX:', error);
+      console.error("Error exporting DOCX:", error);
       toast({
         title: "Error",
         description: "Failed to export DOCX",
@@ -366,72 +448,82 @@ export default function EditWriteupModal({
     try {
       setIsExporting(true);
       const doc = new jsPDF();
-      
+
       // Add title
       doc.setFontSize(16);
-      doc.setFont('helvetica', 'bold');
+      doc.setFont("helvetica", "bold");
       const titleWidth = doc.getTextWidth(title);
       const pageWidth = doc.internal.pageSize.width;
       const titleX = (pageWidth - titleWidth) / 2;
       doc.text(title, titleX, 20);
-      
+
       // Add content with formatting
       doc.setFontSize(12);
       let yPosition = 40;
       const parsedContent = parseFormattedContent(content);
-      
-      parsedContent.forEach(segment => {
-        // Set font style based on formatting
-        let fontStyle = 'normal';
-        if (segment.bold && segment.italic) {
-          fontStyle = 'bolditalic';
-        } else if (segment.bold) {
-          fontStyle = 'bold';
-        } else if (segment.italic) {
-          fontStyle = 'italic';
-        }
-        doc.setFont('helvetica', fontStyle);
 
-        if (segment.text !== '\n') {
+      parsedContent.forEach((segment) => {
+        // Set font style based on formatting
+        let fontStyle = "normal";
+        if (segment.bold && segment.italic) {
+          fontStyle = "bolditalic";
+        } else if (segment.bold) {
+          fontStyle = "bold";
+        } else if (segment.italic) {
+          fontStyle = "italic";
+        }
+        doc.setFont("helvetica", fontStyle);
+
+        if (segment.text !== "\n") {
           const lines = doc.splitTextToSize(segment.text, 170);
-          
+
           // Draw underline if needed
           if (segment.underline) {
             lines.forEach((line: string, index: number) => {
               const lineWidth = doc.getTextWidth(line);
-              doc.line(20, yPosition + 1 + (index * 7), 20 + lineWidth, yPosition + 1 + (index * 7));
+              doc.line(
+                20,
+                yPosition + 1 + index * 7,
+                20 + lineWidth,
+                yPosition + 1 + index * 7
+              );
             });
           }
-          
+
           // Draw strikethrough if needed
           if (segment.strikethrough) {
             lines.forEach((line: string, index: number) => {
               const lineWidth = doc.getTextWidth(line);
-              doc.line(20, yPosition - 1 + (index * 7), 20 + lineWidth, yPosition - 1 + (index * 7));
+              doc.line(
+                20,
+                yPosition - 1 + index * 7,
+                20 + lineWidth,
+                yPosition - 1 + index * 7
+              );
             });
           }
-          
+
           doc.text(lines, 20, yPosition);
-          yPosition += (lines.length * 7);
+          yPosition += lines.length * 7;
         } else {
           yPosition += 7; // Add space for newline
         }
-        
+
         // Check if we need a new page
         if (yPosition > doc.internal.pageSize.height - 20) {
           doc.addPage();
           yPosition = 20;
         }
       });
-      
-      doc.save(`${title.toLowerCase().replace(/\s+/g, '-')}.pdf`);
-      
+
+      doc.save(`${title.toLowerCase().replace(/\s+/g, "-")}.pdf`);
+
       toast({
         title: "Success",
         description: "PDF exported successfully",
       });
     } catch (error) {
-      console.error('Error exporting PDF:', error);
+      console.error("Error exporting PDF:", error);
       toast({
         title: "Error",
         description: "Failed to export PDF",
@@ -455,31 +547,42 @@ export default function EditWriteupModal({
             )}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-4 flex-1 overflow-y-auto">
+        <form
+          onSubmit={handleSubmit}
+          className="px-6 pb-6 space-y-4 flex-1 overflow-y-auto"
+        >
           <div className="flex justify-between items-center gap-4">
             <div className="flex-1 space-y-2">
-              <label htmlFor="title" className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="title"
+                className="text-sm font-medium text-gray-700"
+              >
                 Title
               </label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                disabled={isSaving || isViewingVersions}
-                className="h-12 w-full"
-              />
-            </div>
-            <div className="flex-shrink-0 self-end h-12 mt-1">
-              <VersionHistory
-                writingId={writing.id}
-                onRestoreVersion={handleRestoreVersion}
-                onOpenChange={setIsViewingVersions}
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  disabled={isSaving || isViewingVersions}
+                  className="h-12 w-full"
+                />
+                <div className="h-full flex items-center justify-center">
+                  <VersionHistory
+                    writingId={writing.id}
+                    onRestoreVersion={handleRestoreVersion}
+                    onOpenChange={setIsViewingVersions}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="collection" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="collection"
+              className="text-sm font-medium text-gray-700"
+            >
               Collection (Optional)
             </label>
             <Select
@@ -502,7 +605,10 @@ export default function EditWriteupModal({
           </div>
 
           <div className="space-y-2 flex-1">
-            <label htmlFor="content" className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="content"
+              className="text-sm font-medium text-gray-700"
+            >
               Content
             </label>
             <div className="w-full overflow-hidden border rounded-md">
@@ -515,7 +621,6 @@ export default function EditWriteupModal({
           </div>
 
           <div className="flex justify-end gap-2 pt-4">
-            
             <Button
               type="button"
               variant="outline"
@@ -531,7 +636,11 @@ export default function EditWriteupModal({
                   className="bg-gray-900 hover:bg-gray-800 text-white transition-colors"
                   disabled={isExporting}
                 >
-                  {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <FileDown className="w-4 h-4 mr-2" />}
+                  {isExporting ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <FileDown className="w-4 h-4 mr-2" />
+                  )}
                   Export as
                 </Button>
               </DropdownMenuTrigger>
@@ -544,9 +653,9 @@ export default function EditWriteupModal({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button 
-              type="submit" 
-              className="bg-gray-900 hover:bg-gray-800 text-white transition-colors" 
+            <Button
+              type="submit"
+              className="bg-gray-900 hover:bg-gray-800 text-white transition-colors"
               disabled={isSaving}
             >
               {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
@@ -555,6 +664,54 @@ export default function EditWriteupModal({
           </div>
         </form>
       </DialogContent>
+
+      {/* Unsaved Changes Confirmation Dialog */}
+      <AlertDialog
+        open={showUnsavedChangesDialog}
+        onOpenChange={setShowUnsavedChangesDialog}
+      >
+        <AlertDialogContent className="sm:max-w-[425px]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-yellow-100 flex items-center justify-center">
+                <svg
+                  className="w-4 h-4 text-yellow-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                </svg>
+              </div>
+              Unsaved Changes
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-600 leading-relaxed">
+              You have unsaved changes that will be lost if you close this
+              window. Are you sure you want to discard your changes and
+              continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel
+              onClick={handleCancelClose}
+              className="bg-white hover:bg-gray-50 text-gray-900 border-gray-300"
+            >
+              Keep Editing
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmClose}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Discard Changes
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 }
