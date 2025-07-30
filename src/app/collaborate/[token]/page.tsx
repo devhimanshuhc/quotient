@@ -216,10 +216,7 @@ export default function CollaboratePage() {
           {/* Join Status */}
           <div className="text-center space-y-4">
             {shareInfo.canJoin ? (
-              <>
-                <Badge variant="outline" className="mb-4">
-                  Ready to Join
-                </Badge>
+              <div className=" flex flex-col items-center">
                 <Button
                   size="lg"
                   onClick={handleJoinCollaboration}
@@ -235,7 +232,7 @@ export default function CollaboratePage() {
                     "Join Collaboration"
                   )}
                 </Button>
-              </>
+              </div>
             ) : (
               <>
                 <Badge variant="secondary" className="mb-4">
