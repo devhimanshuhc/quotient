@@ -22,7 +22,17 @@ import { useState, useEffect } from "react";
 
 const SIDEBAR_STATE_CHANGE = "sidebarStateChange";
 
-const sidebarItems = [
+interface SidebarItem {
+  title: string;
+  href: string;
+  icon: React.ComponentType<any>;
+  badge?: {
+    text: string;
+    className: string;
+  };
+}
+
+const sidebarItems: SidebarItem[] = [
   {
     title: "Dashboard",
     href: "/dashboard",
@@ -47,11 +57,6 @@ const sidebarItems = [
     title: "Shared",
     href: "/shared",
     icon: Users,
-    badge: {
-      text: "Coming Soon",
-      className:
-        "bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full ml-2",
-    },
   },
   // {
   //   title: 'Quotes',

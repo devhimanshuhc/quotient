@@ -38,17 +38,25 @@ model Session {
 }
 
 model User {
-  id            String       @id @default(cuid())
-  name          String?
-  email         String?      @unique
-  emailVerified DateTime?
-  image         String?
-  totalTimeSpent Int        @default(0)
-  lastActive    DateTime?
-  accounts      Account[]
-  sessions      Session[]
-  collections   Collection[]
-  writings      Writing[]
+  id             String    @id @default(cuid())
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  totalTimeSpent Int       @default(0)
+  lastActive     DateTime?
+
+  // Analytics fields
+  views      Int   @default(0)
+  reads      Int   @default(0)
+  engagement Float @default(0)
+
+  accounts       Account[]
+  sessions       Session[]
+  collections    Collection[]
+  writings       Writing[]
+  collaborations Collaborator[]
+  shareTokens    ShareToken[]
 }
 
 model VerificationToken {
@@ -71,28 +79,72 @@ model Collection {
 }
 
 model Writing {
-  id          String       @id @default(cuid())
-  title       String
-  content     String       @db.Text
-  wordCount   Int         @default(0)
-  timeSpent   Int         @default(0)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  published   Boolean      @default(false)
-  userId      String
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  collections Collection[]
-  versions    WritingVersion[]
+  id        String   @id @default(cuid())
+  title     String
+  content   String   @db.Text
+  wordCount Int      @default(0)
+  timeSpent Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  published Boolean  @default(false)
+
+  // Analytics fields
+  views      Int   @default(0)
+  reads      Int   @default(0)
+  engagement Float @default(0)
+
+  userId        String
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collections   Collection[]
+  versions      WritingVersion[]
+  collaborators Collaborator[]
+  shareTokens   ShareToken[]
 }
 
 model WritingVersion {
-  id          String   @id @default(cuid())
-  title       String
-  content     String   @db.Text
-  createdAt   DateTime @default(now())
+  id            String   @id @default(cuid())
+  title         String
+  content       String   @db.Text
+  createdAt     DateTime @default(now())
   versionNumber Int
-  writingId   String
-  writing     Writing  @relation(fields: [writingId], references: [id], onDelete: Cascade)
+  writingId     String
+  writing       Writing  @relation(fields: [writingId], references: [id], onDelete: Cascade)
 
   @@index([writingId])
+}
+
+model Collaborator {
+  id         String           @id @default(cuid())
+  writingId  String
+  userId     String
+  role       CollaboratorRole @default(EDITOR)
+  joinedAt   DateTime         @default(now())
+  lastActive DateTime?
+  writing    Writing          @relation(fields: [writingId], references: [id], onDelete: Cascade)
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([writingId, userId])
+  @@index([writingId])
+}
+
+model ShareToken {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  writingId String
+  createdBy String
+  isActive  Boolean   @default(true)
+  maxUsers  Int       @default(3) // Owner + 2 collaborators
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  writing   Writing   @relation(fields: [writingId], references: [id], onDelete: Cascade)
+  creator   User      @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@index([writingId])
+  @@index([token])
+}
+
+enum CollaboratorRole {
+  OWNER
+  EDITOR
+  VIEWER
 }

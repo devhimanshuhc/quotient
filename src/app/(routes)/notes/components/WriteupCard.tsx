@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,13 +11,14 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import EditWriteupModal from '@/components/modals/EditWriteupModal';
-import { format } from 'date-fns';
-import { motion } from 'framer-motion';
-import DOMPurify from 'isomorphic-dompurify';
-import { Trash2 } from 'lucide-react';
+import EditWriteupModal from "@/components/modals/EditWriteupModal";
+import ShareModal from "@/components/modals/ShareModal";
+import { format } from "date-fns";
+import { motion } from "framer-motion";
+import DOMPurify from "isomorphic-dompurify";
+import { Trash2, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 interface Collection {
   id: string;
@@ -40,7 +41,7 @@ interface WriteupCardProps {
 export function WriteupCard({ writing, collections }: WriteupCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [contentPreview, setContentPreview] = useState('');
+  const [contentPreview, setContentPreview] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
@@ -48,13 +49,15 @@ export function WriteupCard({ writing, collections }: WriteupCardProps) {
 
   useEffect(() => {
     const getContentPreview = (content: string) => {
-      if (typeof window !== 'undefined') {
-        const tempDiv = document.createElement('div');
+      if (typeof window !== "undefined") {
+        const tempDiv = document.createElement("div");
         tempDiv.innerHTML = DOMPurify.sanitize(content);
-        const textContent = tempDiv.textContent || tempDiv.innerText || '';
-        return textContent.length > 150 ? textContent.slice(0, 150) + '...' : textContent;
+        const textContent = tempDiv.textContent || tempDiv.innerText || "";
+        return textContent.length > 150
+          ? textContent.slice(0, 150) + "..."
+          : textContent;
       }
-      return '';
+      return "";
     };
 
     setContentPreview(getContentPreview(writing.content));
@@ -64,11 +67,11 @@ export function WriteupCard({ writing, collections }: WriteupCardProps) {
     try {
       setIsDeleting(true);
       const response = await fetch(`/api/writings/${writing.id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete write-up');
+        throw new Error("Failed to delete write-up");
       }
 
       toast({
@@ -78,7 +81,7 @@ export function WriteupCard({ writing, collections }: WriteupCardProps) {
 
       router.refresh();
     } catch (error) {
-      console.error('Error deleting write-up:', error);
+      console.error("Error deleting write-up:", error);
       toast({
         title: "Error",
         description: "Failed to delete write-up",
@@ -91,42 +94,63 @@ export function WriteupCard({ writing, collections }: WriteupCardProps) {
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Prevent opening edit modal when clicking delete button
-    if ((e.target as HTMLElement).closest('.delete-button')) {
+    // Prevent opening edit modal when clicking on action buttons or their children
+    const target = e.target as HTMLElement;
+
+    // Check if click is on delete button, share button, or any button/modal trigger
+    if (
+      target.closest("button") ||
+      target.closest('[role="dialog"]') ||
+      target.closest(".delete-button") ||
+      target.closest(".action-buttons") ||
+      target.closest("[data-radix-popper-content-wrapper]") // Dialog content wrapper
+    ) {
       e.stopPropagation();
       return;
     }
+
     setIsModalOpen(true);
   };
 
   return (
     <>
-      <motion.div
-        whileHover={{ y: -5 }}
-        transition={{ duration: 0.2 }}
-      >
-        <Card 
+      <motion.div whileHover={{ y: -5 }} transition={{ duration: 0.2 }}>
+        <Card
           className="p-6 hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col relative group"
           onClick={handleCardClick}
         >
           {hasUnsavedChanges && (
-            <div className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white" 
-                 title="Unsaved Changes">
-            </div>
+            <div
+              className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full border-2 border-white"
+              title="Unsaved Changes"
+            ></div>
           )}
 
-          {/* Delete Button */}
-          <Button
-            variant="outline"
-            size="icon"
-            className="delete-button absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 bg-white hover:bg-red-50 hover:text-red-600 border-gray-200"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowDeleteDialog(true);
-            }}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          {/* Action Buttons */}
+          <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity action-buttons">
+            <ShareModal writingId={writing.id} writingTitle={writing.title}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 bg-white hover:bg-blue-50 hover:text-blue-600 border-gray-200"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Share2 className="h-4 w-4" />
+              </Button>
+            </ShareModal>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8 bg-white hover:bg-red-50 hover:text-red-600 border-gray-200"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteDialog(true);
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
 
           <div className="flex-1">
             <h3 className="text-lg font-semibold mb-2 line-clamp-2 pr-8">
@@ -136,7 +160,7 @@ export function WriteupCard({ writing, collections }: WriteupCardProps) {
               {contentPreview}
             </p>
           </div>
-          
+
           <div className="mt-auto">
             {writing.collections.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
@@ -151,12 +175,12 @@ export function WriteupCard({ writing, collections }: WriteupCardProps) {
               </div>
             )}
             <div className="text-xs text-gray-500">
-              {format(new Date(writing.createdAt), 'MMM d, yyyy')}
+              {format(new Date(writing.createdAt), "MMM d, yyyy")}
             </div>
           </div>
         </Card>
       </motion.div>
-      
+
       <EditWriteupModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -171,7 +195,8 @@ export function WriteupCard({ writing, collections }: WriteupCardProps) {
           <DialogHeader>
             <DialogTitle>Delete Write-up</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{writing.title}"? This action cannot be undone.
+              Are you sure you want to delete "{writing.title}"? This action
+              cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
